@@ -1,0 +1,57 @@
+"use client";
+
+import { useState } from "react";
+import { storage, STORAGE_KEYS, UserStats, defaultUserStats } from "@/lib/storage";
+import { checkNewAchievements, Achievement } from "@/lib/achievements";
+
+export function useUserStats() {
+  const [stats, setStats] = useState<UserStats>(() => {
+    const savedStats = storage.get<UserStats>(STORAGE_KEYS.USER_STATS, defaultUserStats);
+    
+    // Update streak
+    const today = new Date().toISOString().split("T")[0];
+    const lastActive = savedStats.lastActive;
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    
+    const updatedStats = { ...savedStats };
+    
+    if (lastActive === yesterday) {
+      // Continue streak
+      updatedStats.streak += 1;
+      updatedStats.longestStreak = Math.max(updatedStats.streak, updatedStats.longestStreak);
+    } else if (lastActive !== today) {
+      // Reset streak
+      updatedStats.streak = 1;
+    }
+    
+    updatedStats.lastActive = today;
+    storage.set(STORAGE_KEYS.USER_STATS, updatedStats);
+    
+    return updatedStats;
+  });
+  
+  const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
+
+  const updateStats = (updates: Partial<UserStats>) => {
+    const previousStats = { ...stats };
+    const newStats = { ...stats, ...updates };
+    
+    // Check for new achievements
+    const unlockedAchievements = checkNewAchievements(newStats, previousStats);
+    
+    if (unlockedAchievements.length > 0) {
+      const achievementIds = unlockedAchievements.map(a => a.id);
+      newStats.achievements = [...new Set([...newStats.achievements, ...achievementIds])];
+      setNewAchievements(unlockedAchievements);
+    }
+    
+    setStats(newStats);
+    storage.set(STORAGE_KEYS.USER_STATS, newStats);
+  };
+
+  const clearNewAchievements = () => {
+    setNewAchievements([]);
+  };
+
+  return { stats, updateStats, newAchievements, clearNewAchievements };
+}
