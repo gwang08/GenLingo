@@ -72,7 +72,7 @@ export default function DailyMiniLessonCard() {
 
   if (loading) {
     return (
-      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
+      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-black border-0">
         <div className="flex justify-center items-center py-8">
           <Spin size="large" />
         </div>
@@ -82,7 +82,7 @@ export default function DailyMiniLessonCard() {
 
   if (error || !lesson) {
     return (
-      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
+      <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-black border-0">
         <Alert
           message="Không thể tải bài học hôm nay"
           description="Vui lòng thử lại sau"
@@ -101,8 +101,8 @@ export default function DailyMiniLessonCard() {
         transition={{ duration: 0.5 }}
       >
         <Card
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 shadow-xl"
-          bodyStyle={{ padding: "24px" }}
+          className="bg-gradient-to-r from-indigo-500 to-purple-600 text-black border-0 shadow-xl"
+          styles={{ body: { padding: "24px" } }}
         >
           <div className="flex items-start gap-3 mb-4">
             <motion.div
@@ -120,20 +120,20 @@ export default function DailyMiniLessonCard() {
             </motion.div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="text-xl font-bold text-white m-0">{lesson.title}</h3>
+                <h3 className="text-xl font-bold text-black m-0">{lesson.title}</h3>
                 <Tag color="orange" icon={<ThunderboltOutlined />}>
                   AI Generated
                 </Tag>
               </div>
-              <p className="text-indigo-100 text-sm mb-0">Bài học mini hôm nay</p>
+              <p className="text-gray-800 text-sm mb-0">Bài học mini hôm nay</p>
             </div>
           </div>
 
           <div className="mb-4">
-            <p className="text-white mb-2">{lesson.description}</p>
+            <p className="text-black mb-2">{lesson.description}</p>
             <div className="p-3 bg-white bg-opacity-20 rounded-lg border border-white border-opacity-30">
-              <div className="text-xs text-indigo-200 mb-1">💡 ĐIỂM CHÍNH</div>
-              <div className="font-semibold text-white">{lesson.keyPoint}</div>
+              <div className="text-xs text-gray-800 mb-1">💡 ĐIỂM CHÍNH</div>
+              <div className="font-semibold text-black">{lesson.keyPoint}</div>
             </div>
           </div>
 
@@ -154,7 +154,7 @@ export default function DailyMiniLessonCard() {
             <div className="text-center py-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 rounded-full">
                 <TrophyOutlined className="text-yellow-300" />
-                <span className="text-white font-medium">Đã hoàn thành!</span>
+                <span className="text-black font-medium">Đã hoàn thành!</span>
               </div>
             </div>
           )}

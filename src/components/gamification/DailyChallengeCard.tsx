@@ -29,7 +29,7 @@ export default function DailyChallengeCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-white border-0 shadow-xl">
+      <Card className="bg-gradient-to-br from-purple-500 to-pink-500 text-black border-0 shadow-xl">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <motion.div
@@ -46,10 +46,10 @@ export default function DailyChallengeCard({
               <TrophyOutlined className="text-4xl text-yellow-300" />
             </motion.div>
             <div>
-              <h3 className="text-xl font-bold mb-1 text-white">
+              <h3 className="text-xl font-bold mb-1 text-black">
                 Thử thách hôm nay
               </h3>
-              <p className="text-purple-100 text-sm mb-0">
+              <p className="text-gray-800 text-sm mb-0">
                 Hoàn thành để nhận điểm thưởng!
               </p>
             </div>
@@ -75,12 +75,12 @@ export default function DailyChallengeCard({
         </div>
 
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
-          <h4 className="font-bold text-lg mb-2 text-white">{topic.title}</h4>
-          <p className="text-purple-100 text-sm mb-3">
+          <h4 className="font-bold text-lg mb-2 text-black">{topic.title}</h4>
+          <p className="text-gray-800 text-sm mb-3">
             {topic.shortDescription}
           </p>
           
-          <div className="flex items-center gap-4 text-sm text-purple-100">
+          <div className="flex items-center gap-4 text-sm text-gray-800">
             <span>{topic.quiz.length} câu hỏi</span>
             <span>•</span>
             <span>Bonus: +50 XP</span>
@@ -88,7 +88,7 @@ export default function DailyChallengeCard({
         </div>
 
         <div className="mb-4">
-          <div className="flex justify-between text-sm text-purple-100 mb-2">
+          <div className="flex justify-between text-sm text-gray-800 mb-2">
             <span>Thời gian còn lại</span>
             <span className="font-bold">{hoursLeft}h {minutesLeft}m</span>
           </div>
@@ -117,7 +117,7 @@ export default function DailyChallengeCard({
         )}
         
         {isCompleted && (
-          <div className="text-center py-2 text-purple-100">
+          <div className="text-center py-2 text-gray-800">
             🎉 Xuất sắc! Quay lại vào ngày mai nhé!
           </div>
         )}

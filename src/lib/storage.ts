@@ -60,7 +60,6 @@ export const defaultUserStats: UserStats = {
 
 export const STORAGE_KEYS = {
   USER_STATS: "thpt_user_stats",
-  THEME: "thpt_theme",
   DAILY_CHALLENGE: "thpt_daily_challenge",
   LEADERBOARD_CACHE: "thpt_leaderboard_cache",
   DAILY_LESSON_CACHE: "thpt_daily_lesson_cache",

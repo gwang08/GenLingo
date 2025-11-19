@@ -1,38 +1,45 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Layout, Menu } from "antd";
-import { HomeOutlined, BookOutlined, TrophyOutlined } from "@ant-design/icons";
-import DarkModeToggle from "./DarkModeToggle";
+import { usePathname, useRouter } from "next/navigation";
+import { Layout, Menu, Drawer, Button } from "antd";
+import { HomeOutlined, BookOutlined, TrophyOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
 
 const { Header: AntHeader } = Layout;
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
     {
       key: "/",
       icon: <HomeOutlined />,
-      label: <Link href="/">Trang chủ</Link>,
+      label: "Trang chủ",
     },
     {
       key: "/grammar",
       icon: <BookOutlined />,
-      label: <Link href="/grammar">Ngữ pháp</Link>,
+      label: "Ngữ pháp",
     },
     {
       key: "/quiz",
       icon: <TrophyOutlined />,
-      label: <Link href="/quiz">Luyện Quiz</Link>,
+      label: "Luyện Quiz",
     },
     {
       key: "/progress",
       icon: <TrophyOutlined />,
-      label: <Link href="/progress">Tiến độ</Link>,
+      label: "Tiến độ",
     },
   ];
+
+  const handleMenuClick = (e: { key: string }) => {
+    setMobileMenuOpen(false);
+    router.push(e.key);
+  };
 
   return (
     <AntHeader className="!bg-white !px-4 shadow-sm sticky top-0 z-50">
@@ -40,16 +47,56 @@ export default function Header() {
         <Link href="/" className="text-xl font-bold text-blue-600 no-underline">
           THPT 2025
         </Link>
-        <div className="flex items-center gap-4">
+
+        {/* Desktop Menu */}
+        <div className="desktop-menu">
           <Menu
             mode="horizontal"
             selectedKeys={[pathname]}
             items={menuItems}
-            className="border-0 flex-1 min-w-0"
+            onClick={handleMenuClick}
+            className="border-0"
           />
-          <DarkModeToggle />
+        </div>
+
+        {/* Mobile Menu Button */}
+        <div className="mobile-menu-button">
+          <Button
+            type="text"
+            icon={<MenuOutlined className="text-xl" />}
+            onClick={() => setMobileMenuOpen(true)}
+            className="!p-2"
+          />
         </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      <Drawer
+        title={
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-bold text-blue-600">THPT 2025</span>
+            <Button
+              type="text"
+              icon={<CloseOutlined />}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+          </div>
+        }
+        placement="top"
+        closable={false}
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        height="auto"
+        className="mobile-menu-drawer"
+      >
+        <Menu
+          mode="vertical"
+          selectedKeys={[pathname]}
+          items={menuItems}
+          onClick={handleMenuClick}
+          className="border-0"
+        />
+      </Drawer>
     </AntHeader>
   );
 }

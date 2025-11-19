@@ -77,7 +77,10 @@ export default function LeaderboardAI({ currentUserScore }: LeaderboardProps) {
     return (
       <Card title={<><TrophyOutlined className="mr-2" />Bảng xếp hạng</>}>
         <div className="flex justify-center items-center py-12">
-          <Spin size="large" tip="Đang tải bảng xếp hạng..." />
+          <div className="text-center">
+            <Spin size="large" />
+            <p className="mt-4 text-gray-500">Đang tải bảng xếp hạng...</p>
+          </div>
         </div>
       </Card>
     );

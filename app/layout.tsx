@@ -38,6 +38,9 @@ export default function RootLayout({
               token: {
                 colorPrimary: "#1890ff",
                 borderRadius: 8,
+                colorText: "#171717",
+                colorTextSecondary: "#525252",
+                colorTextTertiary: "#737373",
               },
             }}
           >
