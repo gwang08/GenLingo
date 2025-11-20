@@ -157,22 +157,22 @@ p {
 
 /* Header Responsive */
 .desktop-menu {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 16px;
 }
 
 .mobile-menu-button {
-  display: none;
+  display: none !important;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .desktop-menu {
-    display: none;
+    display: none !important;
   }
   
   .mobile-menu-button {
-    display: block;
+    display: block !important;
   }
 }
 

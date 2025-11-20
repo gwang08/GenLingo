@@ -225,7 +225,7 @@ export default function DailyMiniLessonCard() {
               <p className="text-gray-700 mb-3">
                 Sẵn sàng kiểm tra kiến thức vừa học?
               </p>
-              <Link href={`/quiz?lesson=${today}`}>
+              <Link href="/daily-quiz">
                 <Button type="primary" size="large" icon={<ThunderboltOutlined />}>
                   Bắt đầu Quiz
                 </Button>

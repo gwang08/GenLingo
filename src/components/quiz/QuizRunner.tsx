@@ -13,12 +13,16 @@ interface QuizRunnerProps {
   questionCount?: number;
   topicTitle?: string;
   topicDescription?: string;
+  difficulty?: "easy" | "medium" | "hard";
+  dailyLessonQuiz?: GrammarQuestion[];
 }
 
 export default function QuizRunner({ 
   questionCount = 10,
   topicTitle,
   topicDescription,
+  difficulty = "medium",
+  dailyLessonQuiz,
 }: QuizRunnerProps) {
   const [questions, setQuestions] = useState<GrammarQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -28,8 +32,16 @@ export default function QuizRunner({
 
   const loadQuestions = () => {
     setIsLoading(true);
-    const randomQuestions = getRandomQuestions(questionCount);
-    setQuestions(randomQuestions);
+    
+    // If daily lesson quiz is provided, use it
+    if (dailyLessonQuiz && dailyLessonQuiz.length > 0) {
+      setQuestions(dailyLessonQuiz);
+    } else {
+      // Otherwise get random questions based on difficulty
+      const randomQuestions = getRandomQuestions(questionCount, difficulty);
+      setQuestions(randomQuestions);
+    }
+    
     setAnswers({});
     setShowResult(false);
     setIsLoading(false);
