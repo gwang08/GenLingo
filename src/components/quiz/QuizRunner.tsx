@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Spin } from "antd";
-import { GrammarQuestion } from "@/data/grammar/grammarCore";
-import { getRandomQuestions, calculateScore } from "@/lib/quiz";
+import { Button, Spin, message } from "antd";
+import { generateQuiz, calculateScore } from "@/lib/quiz";
+import { QuizQuestion } from "@/lib/gemini";
 import { useUserStats } from "@/hooks/useUserStats";
 import QuestionCard from "./QuestionCard";
 import QuizResult from "./QuizResult";
@@ -11,53 +11,39 @@ import AchievementUnlockModal from "@/components/gamification/AchievementUnlockM
 
 interface QuizRunnerProps {
   questionCount?: number;
-  topicTitle?: string;
-  topicDescription?: string;
   difficulty?: "easy" | "medium" | "hard";
-  dailyLessonQuiz?: GrammarQuestion[];
 }
 
 export default function QuizRunner({ 
   questionCount = 10,
-  topicTitle,
-  topicDescription,
   difficulty = "medium",
-  dailyLessonQuiz,
 }: QuizRunnerProps) {
-  const [questions, setQuestions] = useState<GrammarQuestion[]>([]);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showResult, setShowResult] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { stats, updateStats, newAchievements, clearNewAchievements } = useUserStats();
 
-  const loadQuestions = () => {
+  const loadQuestions = async () => {
     setIsLoading(true);
+    setAnswers({});
+    setShowResult(false);
     
-    // If daily lesson quiz is provided, use it
-    if (dailyLessonQuiz && dailyLessonQuiz.length > 0) {
-      setQuestions(dailyLessonQuiz);
-    } else {
-      // Otherwise get random questions based on difficulty
-      const randomQuestions = getRandomQuestions(questionCount, difficulty);
-      setQuestions(randomQuestions);
+    try {
+      const newQuestions = await generateQuiz(difficulty, questionCount);
+      setQuestions(newQuestions);
+    } catch (error) {
+      console.error("Error loading quiz:", error);
+      message.error(error instanceof Error ? error.message : "Không thể tải câu hỏi. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
     }
-    
-    setAnswers({});
-    setShowResult(false);
-    setIsLoading(false);
-  };
-
-  const handleNewQuestions = (newQuestions: GrammarQuestion[]) => {
-    setQuestions(newQuestions);
-    setAnswers({});
-    setShowResult(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
     loadQuestions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [difficulty]);
 
   const handleAnswerSelect = (questionId: string, answerIndex: number) => {
     setAnswers({ ...answers, [questionId]: answerIndex });
@@ -84,8 +70,9 @@ export default function QuizRunner({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
+      <div className="flex flex-col justify-center items-center min-h-[400px] gap-4">
         <Spin size="large" />
+        <p className="text-gray-600">AI đang tạo câu hỏi cho bạn...</p>
       </div>
     );
   }
@@ -99,9 +86,6 @@ export default function QuizRunner({
           score={score}
           onRetry={loadQuestions}
           onBackToHome={() => (window.location.href = "/")}
-          topicTitle={topicTitle}
-          topicDescription={topicDescription}
-          onNewQuestions={handleNewQuestions}
         />
         <AchievementUnlockModal
           achievements={newAchievements}
@@ -116,10 +100,10 @@ export default function QuizRunner({
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          {topicTitle || "Quiz tổng hợp"}
+          Quiz AI - Độ khó {difficulty === "easy" ? "Dễ" : difficulty === "medium" ? "Trung bình" : "Khó"}
         </h2>
         <p className="text-gray-600">
-          {topicDescription || `Hoàn thành ${questions.length} câu hỏi để kiểm tra kiến thức của bạn`}
+          Hoàn thành {questions.length} câu hỏi được AI tạo riêng cho bạn
         </p>
         <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
           <p className="text-sm text-gray-700 mb-0">

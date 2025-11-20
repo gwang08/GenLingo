@@ -1,31 +1,20 @@
-import { GrammarQuestion, GrammarTopic, GRAMMAR_TOPICS } from "@/data/grammar/grammarCore";
+import { generateQuizQuestions, QuizQuestion } from "./gemini";
 
 /**
- * Lấy ngẫu nhiên N câu hỏi từ tất cả các topics với độ khó được chọn
+ * Tạo quiz mới bằng AI theo độ khó
  */
-export function getRandomQuestions(
-  count: number,
-  difficulty: "easy" | "medium" | "hard" = "medium"
-): GrammarQuestion[] {
-  const allQuestions: GrammarQuestion[] = [];
-  
-  GRAMMAR_TOPICS.forEach((topic: GrammarTopic) => {
-    allQuestions.push(...topic.quiz);
-  });
-  
-  // Filter by difficulty if needed (for now, just shuffle all)
-  // In future, you can add difficulty field to questions and filter here
-  
-  // Shuffle và lấy N câu
-  const shuffled = allQuestions.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+export async function generateQuiz(
+  difficulty: "easy" | "medium" | "hard" = "medium",
+  count: number = 10
+): Promise<QuizQuestion[]> {
+  return await generateQuizQuestions(difficulty, count);
 }
 
 /**
  * Tính điểm quiz
  */
 export function calculateScore(
-  questions: GrammarQuestion[],
+  questions: QuizQuestion[],
   answers: Record<string, number>
 ): number {
   let correct = 0;

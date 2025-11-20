@@ -534,3 +534,88 @@ Trả về JSON thuần, không có markdown, không có \`\`\`.`;
   }
 }
 
+// ============= QUIZ QUESTIONS GENERATOR (by difficulty) =============
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+  difficulty: "easy" | "medium" | "hard";
+}
+
+export async function generateQuizQuestions(
+  difficulty: "easy" | "medium" | "hard",
+  count: number = 10
+): Promise<QuizQuestion[]> {
+  // Check rate limit
+  if (!checkRateLimit()) {
+    throw new Error("⏰ Đã đạt giới hạn tạo câu hỏi. Vui lòng đợi 1 phút.");
+  }
+
+  // Check cache
+  const cacheKey = `quiz:${difficulty}:${count}`;
+  const cached = getCached<QuizQuestion[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const difficultyDescriptions = {
+      easy: "dễ (lớp 10-11), từ vựng cơ bản, ngữ pháp đơn giản",
+      medium: "trung bình (lớp 12), phù hợp đề thi THPT Quốc Gia",
+      hard: "khó (nâng cao), yêu cầu suy luận và hiểu sâu"
+    };
+
+    const prompt = `Tạo ${count} câu hỏi trắc nghiệm tiếng Anh, độ khó ${difficultyDescriptions[difficulty]}.
+
+YÊU CẦU:
+1. Các dạng câu hỏi đa dạng:
+   - Ngữ pháp (tenses, conditionals, passive voice, modal verbs, etc.)
+   - Từ vựng (synonyms, antonyms, word forms, collocations)
+   - Giới từ (prepositions)
+   - Phrasal verbs
+   - Reading comprehension (short passages)
+2. Mỗi câu có 4 đáp án A, B, C, D
+3. Giải thích chi tiết bằng tiếng Việt cho từng câu
+
+Format JSON:
+[
+  {
+    "id": "q1",
+    "question": "She ___ to the gym every morning.",
+    "options": ["go", "goes", "going", "gone"],
+    "correctIndex": 1,
+    "explanation": "Giải thích: Chủ ngữ 'She' là ngôi thứ 3 số ít, động từ cần chia thêm 's/es'. Đáp án đúng: goes.",
+    "difficulty": "${difficulty}"
+  }
+]
+
+Trả về JSON array thuần, không có markdown, không có \`\`\`.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let jsonText = response.text().trim();
+
+    // Clean up response
+    jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+    const questions: QuizQuestion[] = JSON.parse(jsonText);
+
+    // Assign unique IDs
+    const finalQuestions = questions.map((q, index) => ({
+      ...q,
+      id: `quiz-${difficulty}-${Date.now()}-${index}`,
+      difficulty: difficulty
+    }));
+    
+    // Cache result
+    setCache(cacheKey, finalQuestions);
+    
+    return finalQuestions;
+  } catch (error) {
+    console.error("Generate Quiz Questions Error:", error);
+    throw new Error("Không thể tạo câu hỏi quiz. Vui lòng thử lại sau.");
+  }
+}

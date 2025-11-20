@@ -1,29 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, Button, Progress, Tag, message, Spin } from "antd";
+import { useEffect } from "react";
+import { Card, Button, Progress, Tag } from "antd";
 import {
   TrophyOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
-  ThunderboltOutlined,
 } from "@ant-design/icons";
 import confetti from "canvas-confetti";
-import { GrammarQuestion } from "@/data/grammar/grammarCore";
+import { QuizQuestion } from "@/lib/gemini";
 import QuestionCard from "./QuestionCard";
-import { generateMoreQuestions } from "@/lib/gemini";
 import { playSuccessSound } from "@/lib/soundEffects";
 
 interface QuizResultProps {
-  questions: GrammarQuestion[];
+  questions: QuizQuestion[];
   answers: Record<string, number>;
   score: number;
   onRetry: () => void;
   onBackToHome: () => void;
-  topicTitle?: string;
-  topicDescription?: string;
-  onNewQuestions?: (questions: GrammarQuestion[]) => void;
 }
 
 export default function QuizResult({
@@ -32,36 +27,10 @@ export default function QuizResult({
   score,
   onRetry,
   onBackToHome,
-  topicTitle,
-  topicDescription,
-  onNewQuestions,
 }: QuizResultProps) {
-  const [isGenerating, setIsGenerating] = useState(false);
   const correctCount = questions.filter(
     (q) => answers[q.id] === q.correctIndex
   ).length;
-
-  const handleGenerateMore = async () => {
-    if (!topicTitle || !topicDescription || !onNewQuestions) {
-      message.error("Không thể tạo câu hỏi mới cho bài quiz này");
-      return;
-    }
-
-    setIsGenerating(true);
-    try {
-      const newQuestions = await generateMoreQuestions(
-        topicTitle,
-        topicDescription,
-        questions
-      );
-      message.success("Đã tạo 10 câu hỏi mới! Bắt đầu làm thôi! 🚀");
-      onNewQuestions(newQuestions);
-    } catch {
-      message.error("Không thể tạo câu hỏi mới. Vui lòng thử lại sau.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   useEffect(() => {
     if (score === 100) {
@@ -151,21 +120,8 @@ export default function QuizResult({
               size="large"
               onClick={onRetry}
             >
-              Làm lại
+              Làm lại (AI tạo câu mới)
             </Button>
-            
-            {topicTitle && topicDescription && onNewQuestions && (
-              <Button
-                type="primary"
-                icon={isGenerating ? <Spin size="small" /> : <ThunderboltOutlined />}
-                size="large"
-                onClick={handleGenerateMore}
-                loading={isGenerating}
-                className="!bg-gradient-to-r from-purple-500 to-pink-500 hover:!from-purple-600 hover:!to-pink-600 border-0"
-              >
-                {isGenerating ? "Đang tạo câu hỏi..." : "Tạo 10 câu mới bằng AI"}
-              </Button>
-            )}
             
             <Button size="large" onClick={onBackToHome}>
               Về trang chủ

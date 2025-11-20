@@ -69,7 +69,7 @@ export default function Home() {
         <DailyMiniLessonCard />
       </motion.div>
 
-      <Row gutter={[24, 24]} className="max-w-6xl mx-auto w-full">
+      <Row gutter={[24, 24]} className="w-full">
         <Col xs={24} sm={12} lg={8}>
           <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="h-full">
             <Link href="/grammar" className="no-underline block h-full">

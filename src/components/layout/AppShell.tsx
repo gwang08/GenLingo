@@ -15,7 +15,7 @@ export default function AppShell({ children }: AppShellProps) {
     <Layout className="min-h-screen">
       <Header />
       <Content className="!bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           {children}
         </div>
       </Content>
