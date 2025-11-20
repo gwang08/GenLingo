@@ -11,6 +11,8 @@ import {
 import { GrammarQuestion } from "@/data/grammar/grammarCore";
 import { generateMoreQuestions } from "@/lib/gemini";
 import { playCorrectSound, playIncorrectSound } from "@/lib/soundEffects";
+import { useUserStats } from "@/hooks/useUserStats";
+import AchievementUnlockModal from "@/components/gamification/AchievementUnlockModal";
 
 interface GrammarQuizProps {
   questions: GrammarQuestion[];
@@ -32,6 +34,7 @@ export default function GrammarQuiz({
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const { stats, updateStats, newAchievements, clearNewAchievements } = useUserStats();
 
   const currentQuestion = questions[currentIndex];
   const isCorrect = selectedAnswer === currentQuestion.correctIndex;
@@ -56,10 +59,22 @@ export default function GrammarQuiz({
     if (isCorrect) {
       setScore(score + 1);
     }
+    
+    // Update stats for each question
+    updateStats({
+      totalQuestions: stats.totalQuestions + 1,
+      correctAnswers: stats.correctAnswers + (isCorrect ? 1 : 0),
+    });
   };
 
   const handleNext = () => {
     if (isLastQuestion) {
+      // Update quiz completed count
+      const finalScore = Math.round((score / questions.length) * 100);
+      updateStats({
+        quizzesCompleted: stats.quizzesCompleted + 1,
+        perfectScores: finalScore === 100 ? stats.perfectScores + 1 : stats.perfectScores,
+      });
       setShowResult(true);
     } else {
       setCurrentIndex(currentIndex + 1);
@@ -229,6 +244,13 @@ export default function GrammarQuiz({
           </Button>
         )}
       </div>
+      
+      {/* Achievement Unlock Modal */}
+      <AchievementUnlockModal
+        achievements={newAchievements}
+        visible={newAchievements.length > 0}
+        onClose={clearNewAchievements}
+      />
     </Card>
   );
 }

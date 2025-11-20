@@ -14,6 +14,8 @@ import remarkGfm from "remark-gfm";
 import confetti from "canvas-confetti";
 import type { ReadingPassage } from "@/data/reading/types";
 import { playCorrectSound, playIncorrectSound, playSuccessSound } from "@/lib/soundEffects";
+import { useUserStats } from "@/hooks/useUserStats";
+import AchievementUnlockModal from "@/components/gamification/AchievementUnlockModal";
 
 interface ReadingTestProps {
   passage: ReadingPassage;
@@ -25,6 +27,7 @@ export default function ReadingTest({ passage, onNewTest, isLoadingNewTest = fal
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [showExplanations, setShowExplanations] = useState<Record<string, boolean>>({});
+  const { stats, updateStats, newAchievements, clearNewAchievements } = useUserStats();
 
   const handleAnswerChange = (questionId: string, answerIndex: number) => {
     if (submitted) return;
@@ -38,12 +41,21 @@ export default function ReadingTest({ passage, onNewTest, isLoadingNewTest = fal
     }
     setSubmitted(true);
 
-    // Play sound effects
+    // Calculate results
     const correctCount = passage.questions.filter(
       (q) => answers[q.id] === q.correctIndex
     ).length;
     const score = Math.round((correctCount / passage.questions.length) * 100);
 
+    // Update user stats
+    updateStats({
+      totalQuestions: stats.totalQuestions + passage.questions.length,
+      correctAnswers: stats.correctAnswers + correctCount,
+      quizzesCompleted: stats.quizzesCompleted + 1,
+      perfectScores: score === 100 ? stats.perfectScores + 1 : stats.perfectScores,
+    });
+
+    // Play sound effects
     if (score === 100) {
       playSuccessSound();
       confetti({
@@ -293,6 +305,13 @@ export default function ReadingTest({ passage, onNewTest, isLoadingNewTest = fal
           </div>
         )}
       </Card>
+
+      {/* Achievement Unlock Modal */}
+      <AchievementUnlockModal
+        achievements={newAchievements}
+        visible={newAchievements.length > 0}
+        onClose={clearNewAchievements}
+      />
     </div>
   );
 }

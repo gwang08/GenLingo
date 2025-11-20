@@ -156,9 +156,6 @@ function DailyQuizContent() {
       <QuizRunner
         questionCount={dailyLesson.quiz.length}
         difficulty={difficulty}
-        dailyLessonQuiz={dailyLesson.quiz}
-        topicTitle={dailyLesson.title}
-        topicDescription={dailyLesson.description}
       />
     </div>
   );
