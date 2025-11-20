@@ -8,7 +8,7 @@ import StreakDisplay from "@/components/gamification/StreakDisplay";
 import AchievementsGrid from "@/components/gamification/AchievementsGrid";
 import AchievementUnlockModal from "@/components/gamification/AchievementUnlockModal";
 import DailyMiniLessonCard from "@/components/gamification/DailyMiniLessonCard";
-import LeaderboardAI from "@/components/gamification/LeaderboardAI";
+import LeaderboardFirestore from "@/components/gamification/LeaderboardFirestore";
 
 export default function ProgressPage() {
   const [isClient, setIsClient] = useState(false);
@@ -18,8 +18,6 @@ export default function ProgressPage() {
     const timer = setTimeout(() => setIsClient(true), 0);
     return () => clearTimeout(timer);
   }, []);
-
-  const userScore = stats.correctAnswers * 10 + stats.streak * 50;
 
   return (
     <div>
@@ -53,10 +51,10 @@ export default function ProgressPage() {
         <AchievementsGrid stats={stats} />
       </div>
 
-      {/* Leaderboard AI */}
+      {/* Real-time Leaderboard from Firestore */}
       {isClient && (
         <div className="mt-6">
-          <LeaderboardAI currentUserScore={userScore} />
+          <LeaderboardFirestore />
         </div>
       )}
 

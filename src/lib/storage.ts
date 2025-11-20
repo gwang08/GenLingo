@@ -42,6 +42,7 @@ export interface UserStats {
   achievements: string[];
   dailyChallengeCompleted: boolean;
   soundEnabled: boolean;
+  totalScore: number; // NEW: Tổng điểm XP
 }
 
 export const defaultUserStats: UserStats = {
@@ -56,7 +57,19 @@ export const defaultUserStats: UserStats = {
   achievements: [],
   dailyChallengeCompleted: false,
   soundEnabled: true,
+  totalScore: 0, // NEW
 };
+
+// Calculate total score based on stats
+export function calculateTotalScore(stats: UserStats): number {
+  return (
+    stats.correctAnswers * 10 +        // 10 XP per correct answer
+    stats.perfectScores * 50 +          // 50 XP bonus for perfect quiz
+    stats.streak * 20 +                 // 20 XP per streak day
+    stats.quizzesCompleted * 25 +       // 25 XP per quiz completed
+    stats.achievements.length * 100     // 100 XP per achievement
+  );
+}
 
 export const STORAGE_KEYS = {
   USER_STATS: "thpt_user_stats",

@@ -5,8 +5,7 @@ import { Card, Row, Col, Button } from "antd";
 import { BookOutlined, TrophyOutlined, RocketOutlined, ReadOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import DailyMiniLessonCard from "@/components/gamification/DailyMiniLessonCard";
-import LeaderboardAI from "@/components/gamification/LeaderboardAI";
-import { useUserStats } from "@/hooks/useUserStats";
+import LeaderboardFirestore from "@/components/gamification/LeaderboardFirestore";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -30,10 +29,6 @@ const itemVariants = {
 };
 
 export default function Home() {
-  const { stats } = useUserStats();
-
-  const userScore = stats.correctAnswers * 10 + stats.streak * 50;
-
   return (
     <motion.div
       className="min-h-[calc(100vh-200px)]"
@@ -149,9 +144,9 @@ export default function Home() {
         </Col>
       </Row>
 
-      {/* Leaderboard AI */}
+      {/* Real-time Leaderboard from Firestore */}
       <motion.div className="mt-6" variants={itemVariants}>
-        <LeaderboardAI currentUserScore={userScore} />
+        <LeaderboardFirestore />
       </motion.div>
 
       <motion.div className="mt-8 text-center" variants={itemVariants}>

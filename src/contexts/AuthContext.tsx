@@ -89,6 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         quizzesCompleted: 0,
         streak: 0,
         perfectScores: 0,
+        totalScore: 0, // NEW: Add totalScore
+        achievements: [],
+        topicsCompleted: [],
+        longestStreak: 0,
+        lastActive: new Date().toISOString().split("T")[0],
+        dailyChallengeCompleted: false,
+        soundEnabled: true,
       },
       deviceInfo: {
         platform: typeof window !== 'undefined' ? (
@@ -133,6 +140,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           quizzesCompleted: 0,
           streak: 0,
           perfectScores: 0,
+          totalScore: 0, // NEW: Add totalScore
+          achievements: [],
+          topicsCompleted: [],
+          longestStreak: 0,
+          lastActive: new Date().toISOString().split("T")[0],
+          dailyChallengeCompleted: false,
+          soundEnabled: true,
         },
         deviceInfo: {
           platform: typeof window !== 'undefined' ? (

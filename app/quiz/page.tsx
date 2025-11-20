@@ -28,20 +28,20 @@ function QuizPageContent() {
         <div>
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-3">
-              Quiz T?ng H?p
+              Quiz Tổng Hợp
             </h1>
             <p className="text-lg text-gray-600">
-              Ki?m tra ki?n th?c c?a b?n v?i c�c c�u h?i du?c ch?n ng?u nhi�n
+              Kiểm tra kiến thức của bạn với các câu hỏi được chọn ngẫu nhiên
             </p>
           </div>
 
           <div className="max-w-3xl mx-auto">
             <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-                ?? Ch?n d? kh�
+                📝 Chọn độ khó
               </h2>
               <p className="text-center text-gray-600 mb-6">
-                Ch?n m?c d? ph� h?p v?i tr�nh d? c?a b?n
+                Chọn mức độ phù hợp với trình độ của bạn
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -51,9 +51,9 @@ function QuizPageContent() {
                   onClick={() => handleDifficultySelect("easy")}
                 >
                   <ThunderboltOutlined className="text-5xl text-green-500 mb-3" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">D?</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Dễ</h3>
                   <p className="text-gray-600 text-sm mb-0">
-                    C�u h?i co b?n, ph� h?p ngu?i m?i b?t d?u
+                    Câu hỏi cơ bản, phù hợp người mới bắt đầu
                   </p>
                 </Card>
 
@@ -63,9 +63,9 @@ function QuizPageContent() {
                   onClick={() => handleDifficultySelect("medium")}
                 >
                   <FireOutlined className="text-5xl text-yellow-500 mb-3" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Trung b�nh</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Trung bình</h3>
                   <p className="text-gray-600 text-sm mb-0">
-                    C�u h?i ? m?c d? l?p 11-12 THPT
+                    Câu hỏi ở mức độ lớp 11-12 THPT
                   </p>
                 </Card>
 
@@ -75,9 +75,9 @@ function QuizPageContent() {
                   onClick={() => handleDifficultySelect("hard")}
                 >
                   <RocketOutlined className="text-5xl text-red-500 mb-3" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Kh�</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Khó</h3>
                   <p className="text-gray-600 text-sm mb-0">
-                    C�u h?i n�ng cao, �n thi THPT Qu?c gia
+                    Câu hỏi nâng cao, ôn thi THPT Quốc gia
                   </p>
                 </Card>
               </div>
@@ -88,7 +88,7 @@ function QuizPageContent() {
         <LoginRequiredModal
           open={showLoginModal}
           onCancel={() => setShowLoginModal(false)}
-          feature="quiz t?ng h?p"
+          feature="quiz tổng hợp"
         />
       </>
     );
@@ -98,15 +98,15 @@ function QuizPageContent() {
     <div>
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-3">
-          Quiz T?ng H?p
+          Quiz Tổng Hợp
         </h1>
         <p className="text-lg text-gray-600 mb-2">
-          �? kh�: <span className="font-bold text-blue-600">
-            {difficulty === "easy" ? "?? D?" : difficulty === "medium" ? "?? Trung b�nh" : "?? Kh�"}
+          Độ khó: <span className="font-bold text-blue-600">
+            {difficulty === "easy" ? "Dễ" : difficulty === "medium" ? "Trung bình" : "Khó"}
           </span>
         </p>
         <Button type="link" onClick={() => setDifficulty(null)} size="small">
-          �?i d? kh�
+          Đổi độ khó
         </Button>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Divider, Tag } from "antd";
+import { useRouter } from "next/navigation";
 import {
   BookOutlined,
   ExperimentOutlined,
@@ -27,6 +28,8 @@ const itemVariants = {
 };
 
 export default function GrammarDetail({ topic }: GrammarDetailProps) {
+  const router = useRouter();
+  
   return (
     <motion.div
       className="max-w-5xl mx-auto"
@@ -95,6 +98,7 @@ export default function GrammarDetail({ topic }: GrammarDetailProps) {
           questions={topic.quiz} 
           topicTitle={topic.title}
           topicDescription={topic.shortDescription}
+          onComplete={() => router.push("/")}
         />
       </motion.div>
     </motion.div>

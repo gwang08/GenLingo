@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserStats, defaultUserStats } from "@/lib/storage";
+import { UserStats, defaultUserStats, calculateTotalScore } from "@/lib/storage";
 import { checkNewAchievements, Achievement } from "@/lib/achievements";
 
 export function useUserStats() {
@@ -43,9 +43,15 @@ export function useUserStats() {
           }
           
           firestoreStats.lastActive = today;
+          
+          // IMPORTANT: Calculate totalScore if missing
+          if (firestoreStats.totalScore === undefined || firestoreStats.totalScore === null) {
+            firestoreStats.totalScore = calculateTotalScore(firestoreStats);
+          }
+          
           setStats(firestoreStats);
           
-          // Save updated streak
+          // Save updated streak and totalScore
           await setDoc(doc(db, "users", user.uid), {
             stats: firestoreStats,
             updatedAt: serverTimestamp(),
@@ -74,12 +80,17 @@ export function useUserStats() {
     const previousStats = { ...stats };
     const newStats = { ...stats, ...updates };
     
+    // Auto-calculate total score
+    newStats.totalScore = calculateTotalScore(newStats);
+    
     // Check for new achievements
     const unlockedAchievements = checkNewAchievements(newStats, previousStats);
     
     if (unlockedAchievements.length > 0) {
       const achievementIds = unlockedAchievements.map(a => a.id);
       newStats.achievements = [...new Set([...newStats.achievements, ...achievementIds])];
+      // Recalculate score after adding achievements
+      newStats.totalScore = calculateTotalScore(newStats);
       setNewAchievements(unlockedAchievements);
     }
     

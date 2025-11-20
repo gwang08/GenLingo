@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Spin, message } from "antd";
 import { generateQuiz, calculateScore } from "@/lib/quiz";
 import { QuizQuestion } from "@/lib/gemini";
@@ -18,6 +19,7 @@ export default function QuizRunner({
   questionCount = 10,
   difficulty = "medium",
 }: QuizRunnerProps) {
+  const router = useRouter();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showResult, setShowResult] = useState(false);
@@ -85,7 +87,7 @@ export default function QuizRunner({
           answers={answers}
           score={score}
           onRetry={loadQuestions}
-          onBackToHome={() => (window.location.href = "/")}
+          onBackToHome={() => router.push("/")}
         />
         <AchievementUnlockModal
           achievements={newAchievements}
