@@ -160,6 +160,18 @@ p {
   display: flex !important;
   align-items: center;
   gap: 16px;
+  flex: 1;
+}
+
+.desktop-menu .ant-menu {
+  flex: 1;
+  justify-content: flex-end;
+  border: 0 !important;
+}
+
+.desktop-menu .ant-menu-item {
+  padding: 0 12px !important;
+  font-size: 14px;
 }
 
 .mobile-menu-button {

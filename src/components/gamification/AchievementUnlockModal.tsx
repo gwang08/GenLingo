@@ -5,6 +5,8 @@ import { TrophyOutlined, CloseOutlined } from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Achievement } from "@/lib/achievements";
 import { generateAchievementMessage } from "@/lib/gemini";
 
@@ -108,9 +110,11 @@ export default function AchievementUnlockModal({
                           <div className="text-4xl">{achievement.icon}</div>
                           <div className="text-left flex-1">
                             <h4 className="font-bold mb-2">{achievement.title}</h4>
-                            <p className="text-sm text-gray-700 mb-0 leading-relaxed">
-                              {messages[achievement.id] || achievement.description}
-                            </p>
+                            <div className="prose prose-sm max-w-none text-gray-700">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {messages[achievement.id] || achievement.description}
+                              </ReactMarkdown>
+                            </div>
                           </div>
                         </div>
                       </Card>

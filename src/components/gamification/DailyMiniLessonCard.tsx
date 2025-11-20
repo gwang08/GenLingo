@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, Button, Tag, Spin, Alert, Modal } from "antd";
 import { BulbOutlined, ThunderboltOutlined, BookOutlined, TrophyOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { generateDailyMiniLesson, DailyMiniLesson } from "@/lib/gemini";
 import { storage, STORAGE_KEYS } from "@/lib/storage";
 import Link from "next/link";
@@ -189,12 +191,20 @@ export default function DailyMiniLessonCard() {
         <div className="py-4">
           <div className="mb-6">
             <h4 className="font-semibold text-gray-900 mb-2">📚 Giải thích</h4>
-            <p className="text-gray-700">{lesson.description}</p>
+            <div className="prose prose-sm max-w-none">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {lesson.description}
+              </ReactMarkdown>
+            </div>
           </div>
 
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
             <h4 className="font-semibold text-blue-900 mb-2">💡 Điểm chính</h4>
-            <p className="text-blue-800 mb-0">{lesson.keyPoint}</p>
+            <div className="prose prose-sm max-w-none text-blue-800">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {lesson.keyPoint}
+              </ReactMarkdown>
+            </div>
           </div>
 
           <div className="mb-6">
@@ -214,7 +224,11 @@ export default function DailyMiniLessonCard() {
 
           <div className="mb-6 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
             <h4 className="font-semibold text-yellow-900 mb-2">💭 Mẹo nhớ</h4>
-            <p className="text-yellow-800 mb-0">{lesson.tip}</p>
+            <div className="prose prose-sm max-w-none text-yellow-800">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {lesson.tip}
+              </ReactMarkdown>
+            </div>
           </div>
 
           <div>

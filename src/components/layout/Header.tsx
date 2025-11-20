@@ -5,7 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Layout, Menu, Drawer, Button } from "antd";
-import { HomeOutlined, BookOutlined, TrophyOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { 
+  HomeOutlined, 
+  BookOutlined, 
+  MenuOutlined, 
+  CloseOutlined,
+  ReadOutlined,
+  LineChartOutlined,
+  ThunderboltOutlined
+} from "@ant-design/icons";
 
 const { Header: AntHeader } = Layout;
 
@@ -42,13 +50,18 @@ export default function Header() {
       label: "Ngữ pháp",
     },
     {
+      key: "/reading",
+      icon: <ReadOutlined />,
+      label: "Đọc hiểu",
+    },
+    {
       key: "/quiz",
-      icon: <TrophyOutlined />,
-      label: "Luyện Quiz",
+      icon: <ThunderboltOutlined />,
+      label: "Quiz",
     },
     {
       key: "/progress",
-      icon: <TrophyOutlined />,
+      icon: <LineChartOutlined />,
       label: "Tiến độ",
     },
   ];

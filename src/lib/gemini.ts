@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GrammarQuestion } from "@/data/grammar/grammarCore";
+import { ReadingPassage } from "@/data/reading/types";
 
 // Get API key - will be undefined on server, available on client
 const getApiKey = () => {
@@ -438,3 +439,98 @@ Format JSON:
     throw new Error("Không thể tạo chuyên đề. Vui lòng thử lại sau.");
   }
 }
+
+// ============= READING COMPREHENSION TEST GENERATOR =============
+
+export async function generateReadingTest(
+  topic?: string
+): Promise<ReadingPassage> {
+  // Check rate limit
+  if (!checkRateLimit()) {
+    throw new Error("⏰ Đã đạt giới hạn tạo bài đọc. Vui lòng đợi 1 phút.");
+  }
+
+  // Random topic nếu không có
+  const topics = [
+    "Môi trường và biến đổi khí hậu",
+    "Công nghệ và cuộc sống hiện đại",
+    "Giáo dục và tương lai nghề nghiệp",
+    "Sức khỏe và lối sống lành mạnh",
+    "Văn hóa và du lịch Việt Nam",
+    "Khoa học và khám phá vũ trụ",
+    "Thể thao và tinh thần đồng đội",
+    "Nghệ thuật và sáng tạo",
+    "Lịch sử và các phát minh quan trọng",
+    "Động vật hoang dã và bảo tồn thiên nhiên"
+  ];
+  
+  const selectedTopic = topic || topics[Math.floor(Math.random() * topics.length)];
+
+  // Check cache
+  const cacheKey = `reading:${selectedTopic}`;
+  const cached = getCached<ReadingPassage>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    const prompt = `Tạo 1 bài đọc hiểu tiếng Anh cho học sinh lớp 12, theo format đề thi THPT Quốc Gia.
+
+Chủ đề: ${selectedTopic}
+
+YÊU CẦU:
+1. Bài đọc (passage): 250-300 từ, độ khó THPT lớp 12, từ vựng phù hợp B1-B2
+2. 10 câu hỏi trắc nghiệm gồm:
+   - 2-3 câu hỏi về ý chính (main idea)
+   - 2-3 câu hỏi về chi tiết (specific details)
+   - 2-3 câu hỏi về từ vựng trong ngữ cảnh (vocabulary in context)
+   - 1-2 câu hỏi suy luận (inference)
+3. Mỗi câu hỏi có 4 đáp án A, B, C, D
+4. Có giải thích chi tiết bằng tiếng Việt cho mỗi câu
+
+Format JSON:
+{
+  "id": "reading-${Date.now()}",
+  "title": "Tiêu đề bài đọc",
+  "passage": "Nội dung bài đọc...",
+  "topic": "${selectedTopic}",
+  "difficulty": "medium",
+  "questions": [
+    {
+      "id": "q1",
+      "question": "What is the main idea of the passage?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctIndex": 0,
+      "explanation": "Giải thích bằng tiếng Việt tại sao đáp án này đúng"
+    }
+  ]
+}
+
+Trả về JSON thuần, không có markdown, không có \`\`\`.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let jsonText = response.text().trim();
+
+    // Clean up response
+    jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+    const readingPassage: ReadingPassage = JSON.parse(jsonText);
+
+    // Validate and assign unique IDs
+    readingPassage.id = `reading-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    readingPassage.questions = readingPassage.questions.map((q, index) => ({
+      ...q,
+      id: `${readingPassage.id}-q${index + 1}`,
+    }));
+    
+    // Cache result
+    setCache(cacheKey, readingPassage);
+    
+    return readingPassage;
+  } catch (error) {
+    console.error("Generate Reading Test Error:", error);
+    throw new Error("Không thể tạo bài đọc. Vui lòng thử lại sau.");
+  }
+}
+
