@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App } from "antd";
 import { Analytics } from "@vercel/analytics/react";
+import { AuthProvider } from "@/contexts/AuthContext";
 import AppShell from "@/components/layout/AppShell";
 import "./globals.css";
 
@@ -49,7 +50,11 @@ export default function RootLayout({
               },
             }}
           >
-            <AppShell>{children}</AppShell>
+            <App>
+              <AuthProvider>
+                <AppShell>{children}</AppShell>
+              </AuthProvider>
+            </App>
           </ConfigProvider>
         </AntdRegistry>
         <Analytics />

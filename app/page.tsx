@@ -77,7 +77,7 @@ export default function Home() {
                 hoverable
                 className="h-full text-center transition-all duration-300 hover:shadow-2xl flex flex-col"
                 style={{ minHeight: '320px' }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' }}
+                styles={{ body: { display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' } }}
               >
                 <div className="flex flex-col h-full">
                   <BookOutlined className="text-6xl text-blue-500 mb-4" />
@@ -103,7 +103,7 @@ export default function Home() {
                 hoverable
                 className="h-full text-center transition-all duration-300 hover:shadow-2xl flex flex-col"
                 style={{ minHeight: '320px' }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' }}
+                styles={{ body: { display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' } }}
               >
                 <div className="flex flex-col h-full">
                   <ReadOutlined className="text-6xl text-green-500 mb-4" />
@@ -129,7 +129,7 @@ export default function Home() {
                 hoverable
                 className="h-full text-center transition-all duration-300 hover:shadow-2xl flex flex-col"
                 style={{ minHeight: '320px' }}
-                bodyStyle={{ display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' }}
+                styles={{ body: { display: 'flex', flexDirection: 'column', flex: 1, padding: '32px 24px' } }}
               >
                 <div className="flex flex-col h-full">
                   <TrophyOutlined className="text-6xl text-yellow-500 mb-4" />

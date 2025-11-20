@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Card, Tag } from "antd";
 import { 
   BookOutlined, 
@@ -7,21 +8,40 @@ import {
   ExperimentOutlined,
   QuestionCircleOutlined 
 } from "@ant-design/icons";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { GrammarTopic } from "@/data/grammar/grammarCore";
+import { useAuth } from "@/contexts/AuthContext";
+import LoginRequiredModal from "@/components/auth/LoginRequiredModal";
 
 interface GrammarCardProps {
   topic: GrammarTopic;
 }
 
 export default function GrammarCard({ topic }: GrammarCardProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    router.push(`/grammar/${topic.slug}`);
+  };
+
   return (
-    <Link href={`/grammar/${topic.slug}`} className="no-underline">
+    <>
       <motion.div
         whileHover={{ scale: 1.03, y: -5 }}
         whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.2 }}
+        onClick={handleClick}
+        className="cursor-pointer"
       >
         <Card
           hoverable
@@ -53,6 +73,12 @@ export default function GrammarCard({ topic }: GrammarCardProps) {
           </div>
         </Card>
       </motion.div>
-    </Link>
+
+      <LoginRequiredModal
+        open={showLoginModal}
+        onCancel={() => setShowLoginModal(false)}
+        feature="chuyên đề ngữ pháp"
+      />
+    </>
   );
 }

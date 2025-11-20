@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Card, Button, Tag, Row, Col } from "antd";
 import { BookOutlined, ThunderboltOutlined, FireOutlined } from "@ant-design/icons";
 import ReadingTest from "@/components/reading/ReadingTest";
+import LoginRequiredModal from "@/components/auth/LoginRequiredModal";
+import { useAuth } from "@/contexts/AuthContext";
 import { generateReadingTest } from "@/lib/gemini";
 import type { ReadingPassage } from "@/data/reading/types";
 
@@ -22,12 +24,20 @@ const READING_TOPICS = [
 ];
 
 export default function ReadingPage() {
+  const { user } = useAuth();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [passage, setPassage] = useState<ReadingPassage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleTopicSelect = async (topicId: string) => {
+    // Check auth first
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
     const topic = READING_TOPICS.find(t => t.id === topicId);
     if (!topic) return;
 
@@ -74,18 +84,19 @@ export default function ReadingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Page Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <BookOutlined className="text-3xl text-blue-600" />
-            <h1 className="text-3xl font-bold">Luyện đọc hiểu</h1>
+    <>
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-5xl mx-auto">
+          {/* Page Header */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <BookOutlined className="text-3xl text-blue-600" />
+              <h1 className="text-3xl font-bold">Luyện đọc hiểu</h1>
+            </div>
+            <p className="text-gray-600">
+              Chọn chủ đề và rèn luyện kỹ năng đọc hiểu theo format đề thi THPT Quốc Gia
+            </p>
           </div>
-          <p className="text-gray-600">
-            Chọn chủ đề và rèn luyện kỹ năng đọc hiểu theo format đề thi THPT Quốc Gia
-          </p>
-        </div>
 
         {/* Topic Selection */}
         {!selectedTopic && !passage && (
@@ -189,7 +200,14 @@ export default function ReadingPage() {
             />
           </div>
         )}
+        </div>
       </div>
-    </div>
+
+      <LoginRequiredModal
+        open={showLoginModal}
+        onCancel={() => setShowLoginModal(false)}
+        feature="bài đọc hiểu"
+      />
+    </>
   );
 }

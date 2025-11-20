@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Layout, Menu, Drawer, Button } from "antd";
+import { Layout, Menu, Drawer, Button, Avatar, Dropdown, message } from "antd";
 import { 
   HomeOutlined, 
   BookOutlined, 
@@ -12,14 +12,20 @@ import {
   CloseOutlined,
   ReadOutlined,
   LineChartOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  LoginOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
+import { useAuth } from "@/contexts/AuthContext";
 
 const { Header: AntHeader } = Layout;
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, logout, loading, isAdmin } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -71,6 +77,32 @@ export default function Header() {
     router.push(e.key);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success("Đăng xuất thành công!");
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      message.error("Đăng xuất thất bại!");
+    }
+  };
+
+  const userMenuItems = [
+    ...(isAdmin ? [{
+      key: "admin",
+      icon: <DashboardOutlined />,
+      label: "Admin Dashboard",
+      onClick: () => router.push("/admin"),
+    }] : []),
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Đăng xuất",
+      onClick: handleLogout,
+    },
+  ];
+
   return (
     <AntHeader className="!bg-white !px-4 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -87,7 +119,7 @@ export default function Header() {
 
         {/* Desktop Menu */}
         {!isMobile && (
-          <div className="desktop-menu">
+          <div className="desktop-menu flex items-center gap-4">
             <Menu
               mode="horizontal"
               selectedKeys={[pathname]}
@@ -95,12 +127,47 @@ export default function Header() {
               onClick={handleMenuClick}
               className="border-0"
             />
+            
+            {/* User Menu */}
+            {!loading && (
+              user ? (
+                <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                  <Avatar
+                    src={user.photoURL}
+                    icon={<UserOutlined />}
+                    className="cursor-pointer"
+                  >
+                    {user.displayName?.[0] || user.email?.[0]}
+                  </Avatar>
+                </Dropdown>
+              ) : (
+                <Button
+                  type="primary"
+                  icon={<LoginOutlined />}
+                  onClick={() => router.push("/login")}
+                >
+                  Đăng nhập
+                </Button>
+              )
+            )}
           </div>
         )}
 
         {/* Mobile Menu Button */}
         {isMobile && (
-          <div className="mobile-menu-button">
+          <div className="mobile-menu-button flex items-center gap-2">
+            {!loading && user && (
+              <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                <Avatar
+                  src={user.photoURL}
+                  icon={<UserOutlined />}
+                  size="small"
+                  className="cursor-pointer"
+                >
+                  {user.displayName?.[0] || user.email?.[0]}
+                </Avatar>
+              </Dropdown>
+            )}
             <Button
               type="text"
               icon={<MenuOutlined className="text-xl" />}
@@ -145,6 +212,21 @@ export default function Header() {
           onClick={handleMenuClick}
           className="border-0"
         />
+        
+        {/* Mobile Login/Logout */}
+        {!loading && !user && (
+          <Button
+            type="primary"
+            icon={<LoginOutlined />}
+            onClick={() => {
+              setMobileMenuOpen(false);
+              router.push("/login");
+            }}
+            className="w-full mt-4"
+          >
+            Đăng nhập
+          </Button>
+        )}
       </Drawer>
     </AntHeader>
   );

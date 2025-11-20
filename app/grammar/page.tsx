@@ -1,3 +1,5 @@
+"use client";
+
 import { GRAMMAR_TOPICS } from "@/data/grammar/grammarCore";
 import GrammarList from "@/components/grammar/GrammarList";
 
