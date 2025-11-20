@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Radio, Button, Alert, Space, message, Spin } from "antd";
 import { 
   CheckCircleOutlined, 
@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { GrammarQuestion } from "@/data/grammar/grammarCore";
 import { generateMoreQuestions } from "@/lib/gemini";
+import { playCorrectSound, playIncorrectSound } from "@/lib/soundEffects";
 
 interface GrammarQuizProps {
   questions: GrammarQuestion[];
@@ -34,6 +35,18 @@ export default function GrammarQuiz({
 
   const currentQuestion = questions[currentIndex];
   const isCorrect = selectedAnswer === currentQuestion.correctIndex;
+
+  // Play sound when showing feedback
+  useEffect(() => {
+    if (showFeedback && selectedAnswer !== null) {
+      if (isCorrect) {
+        playCorrectSound();
+      } else {
+        playIncorrectSound();
+      }
+    }
+  }, [showFeedback, isCorrect, selectedAnswer]);
+
   const isLastQuestion = currentIndex === questions.length - 1;
 
   const handleAnswer = () => {

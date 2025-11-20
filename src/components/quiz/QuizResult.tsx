@@ -13,6 +13,7 @@ import confetti from "canvas-confetti";
 import { GrammarQuestion } from "@/data/grammar/grammarCore";
 import QuestionCard from "./QuestionCard";
 import { generateMoreQuestions } from "@/lib/gemini";
+import { playSuccessSound } from "@/lib/soundEffects";
 
 interface QuizResultProps {
   questions: GrammarQuestion[];
@@ -65,6 +66,8 @@ export default function QuizResult({
   useEffect(() => {
     if (score === 100) {
       // Perfect score - big celebration!
+      playSuccessSound();
+      
       confetti({
         particleCount: 200,
         spread: 100,

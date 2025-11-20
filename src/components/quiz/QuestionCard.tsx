@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Radio, Space, Button, Spin, Alert } from "antd";
 import { BulbOutlined } from "@ant-design/icons";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { GrammarQuestion } from "@/data/grammar/grammarCore";
 import { explainAnswer } from "@/lib/gemini";
+import { playCorrectSound, playIncorrectSound } from "@/lib/soundEffects";
 
 interface QuestionCardProps {
   question: GrammarQuestion;
@@ -25,6 +28,18 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+
+  // Play sound when showing correct/incorrect feedback
+  useEffect(() => {
+    if (showCorrect && selectedAnswer !== null) {
+      const isCorrect = selectedAnswer === question.correctIndex;
+      if (isCorrect) {
+        playCorrectSound();
+      } else {
+        playIncorrectSound();
+      }
+    }
+  }, [showCorrect, selectedAnswer, question.correctIndex]);
 
   const handleAIExplanation = async () => {
     if (selectedAnswer === null) return;
@@ -109,7 +124,13 @@ export default function QuestionCard({
           {aiExplanation && (
             <Alert
               message="Giải thích từ AI"
-              description={aiExplanation}
+              description={
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {aiExplanation}
+                  </ReactMarkdown>
+                </div>
+              }
               type="info"
               icon={<BulbOutlined />}
               className="mt-2"
